@@ -17,9 +17,15 @@ spec:
   - key: nautilus.io/sdsu-fix
     operator: Exists
     effect: NoSchedule
+  securityContext:
+    runAsUser: 0
+    runAsGroup: 0
   containers:
   - name: gpu
     image: quay.io/jupyter/pytorch-notebook:cuda12-2024-07-29
+    env:
+    - name: GRANT_SUDO
+      value: "yes"
     resources:
       requests:
         cpu: 4
