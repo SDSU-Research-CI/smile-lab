@@ -76,4 +76,34 @@ You will typically follow these steps if this is your first time.
     - You may leave the job running until it reaches the max runtime at which point it will be shut down automatically
         - Or
     - You can tell k8s to shut it down manually with this command:
-        - `kubectl -n $ns delete -f vscode-pod.yaml`
+        ```bash
+        kubectl -n $ns delete -f vscode-pod.yaml
+        ```
+
+## VS Code Deployment
+Running VS Code in a deployment will allow it to run for up to two weeks.
+
+Similarly to customizing the pod, you will first need to customize the deployment in the file `vscode-deployment.yaml`:
+1. If you are running in a shared namespace, then you need to suffix the value of "vscode-gpu" with your SDSUid prefix on lines 4, 9 and 13.
+    - *I.E*: If your SDSUid is maztec@sdsu.edu, lines 4, 9 and 13 should be modified to "vscode-gpu-maztec"
+    - *Note*: These values must match, especially if multiple users are running deployments of VS Code simultaneously in order to avoid conflicts
+1. Attach your home directory in the spec.template.spec.volumes.home entry (line 67) such that the value matches "[your-sdsuid-prefix]-home"
+    - I.E. If your SDSUid is maztec@sdsu.edu, the value should be modified to "maztec-home"
+    - *Note*: Your home directory may only be attached to one job at a time, so if your deployment does not schedule, then make sure your home directory is not in use by another job
+
+You will then follow the same steps in the "Running VS Code" section above, just swapping out the filename `vscode-pod.yaml` for the deployment filename `vscode-deployment.yaml`.
+    - *Note*: Deployments will add additional unique identifiers to their pod's name, so the pod name will look something like `vscode-gpu-[sdsuid]-7f6b645c84-h9v64`
+
+## Rescheduling VS Code
+You may reschedule the same job once it has been completed or reached its maximum runtime.
+
+1. Ensure to clean up the previous job by deleting it:
+    ```bash
+    kubectl -n $ns delete -f vscode-pod.yaml
+    ```
+1. You can then schedule the same job again:
+    ```bash
+    kubectl -n $ns apply -f vscode-pod.yaml
+    ```
+
+The same commands above would also apply to a deployment, just swap out the filename for `vscode-deployment.yaml`.

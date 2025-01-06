@@ -1,0 +1,70 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: vscode-gpu
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: vscode-gpu
+  template:
+    metadata:
+      labels:
+        app: vscode-gpu
+    spec:
+      affinity:
+        nodeAffinity:
+          requiredDuringSchedulingIgnoredDuringExecution:
+            nodeSelectorTerms:
+            - matchExpressions:
+              - key: nautilus.io/csu-tide
+                operator: Exists
+      tolerations:
+      - key: nautilus.io/csu-tide
+        operator: Exists
+        effect: NoSchedule
+      - key: nautilus.io/sdsu-fix
+        operator: Exists
+        effect: NoSchedule
+      securityContext:
+        runAsUser: 0
+        runAsGroup: 0
+      containers:
+      - name: gpu
+        image: quay.io/jupyter/pytorch-notebook:cuda12-2024-07-29
+        command: ["/bin/sh", "-c"]
+        args:
+          - |
+            curl -fsSL https://code-server.dev/install.sh | sh
+            code-server --auth none
+        env:
+        - name: GRANT_SUDO
+          value: "yes"
+        resources:
+          requests:
+            cpu: 4
+            memory: 16Gi
+            ephemeral-storage: 10Gi
+            nvidia.com/gpu: 2
+          limits:
+            cpu: 4
+            memory: 16Gi
+            ephemeral-storage: 10Gi
+            nvidia.com/gpu: 2
+        volumeMounts:
+        - name: shared
+          mountPath: /data
+        - name: home
+          mountPath: /home/jovyan
+        - name: dshm
+          mountPath: /dev/shm
+      volumes:
+        - name: shared
+          persistentVolumeClaim:
+            claimName: shared-data
+        - name: home
+          persistentVolumeClaim:
+            claimName: -home
+        - name: dshm
+          emptyDir:
+            medium: Memory
