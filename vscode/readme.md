@@ -35,16 +35,17 @@ You will typically follow these steps if this is your first time.
     kubectl -n $ns apply -f template-pvc.yaml
     ```
     - *Note*: If you get a validation warning message like 'The PersistentVolumeClaim "-home" is invalid...', then please verify that you saved your changes to the file
-1. Modify the file `vscode-pod.yaml` to attach your home directory in the spec.volumes.home entry (line 58) such that the value matches "[your-sdsuid-prefix]-home"; I.E.: "maztec-home"
 
 ### Running VS Code
+1. Modify the file `vscode-pod.yaml` to attach your home directory in the spec.volumes.home entry (line 58) such that the value matches "[your-sdsuid-prefix]-home"
+    - I.E.: "maztec-home"
 1. (Optional) If you are running this in a shared namespace with other users, then we highly recommend that you append your SDSUid prefix to the metadata.name value (line 4)
-        - *I.E*: If your SDSUid is maztec@sdsu.edu, line 4 should be modified to "vscode-gpu-maztec"
-    - *Note*: If you get a validation warning message like 'The Pod "vscode-gpu" is invalid:...', then please verify that you saved your changes to the file
+    - *I.E*: If your SDSUid is maztec@sdsu.edu, line 4 should be modified to "vscode-gpu-maztec"
 1. Schedule your VS Code job onto TIDE:
     ```bash
     kubectl -n $ns apply -f vscode-pod.yaml
     ```
+    - *Note*: If you get a validation warning message like 'The Pod "vscode-gpu" is invalid:...', then please verify that you saved your changes to the file
 1. Check the status of your pod:
     ```bash
     kubectl -n $ns get pods
@@ -69,16 +70,14 @@ You will typically follow these steps if this is your first time.
     - *Note*: VS Code will continue running regardless of running port-forward, meaning that if you disconnect, then you can reconnect at a later time (assuming the job has not been stopped nor reached its maximum runtime)
 1. Open your web browser and navigate to [http://127.0.0.1:8080/?folder=/data](http://127.0.0.1:8080/?folder=/data)
 1. Start using VS Code in the browser
+    - *Note*: Assuming that you modified the job to attach your home directory, then any VS Code extensions you install should persist between sessions and when rescheduling a VS Code job
 
 ## Clean Up
 1. Hit `ctrl + c` to stop your port-forward command
-1. Stop your VS Code pod: 
-    - You may leave the job running until it reaches the max runtime at which point it will be shut down automatically
-        - Or
-    - You can tell k8s to shut it down manually with this command:
-        ```bash
-        kubectl -n $ns delete -f vscode-pod.yaml
-        ```
+1. Stop your VS Code job: 
+    ```bash
+    kubectl -n $ns delete -f vscode-pod.yaml
+    ```
 
 ## VS Code Deployment
 Running VS Code in a deployment will allow it to run for up to two weeks.
@@ -101,9 +100,6 @@ You may reschedule the same job once it has been completed or reached its maximu
     ```bash
     kubectl -n $ns delete -f vscode-pod.yaml
     ```
-1. You can then schedule the same job again:
-    ```bash
-    kubectl -n $ns apply -f vscode-pod.yaml
-    ```
+1. You can then schedule the same job again by following the directions in the section "Running VS Code" starting at step 3.
 
 The same commands above would also apply to a deployment, just swap out the filename for `vscode-deployment.yaml`.
