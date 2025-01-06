@@ -17,4 +17,5 @@ The following PVCs (disks) are available in the sdsu-smile namespace:
 
 ## Example Code
 
-- [GPU pod](./pod.yaml)
+- [Jupyter GPU pod](./jupyter-pod.yaml)
+- [VS Code with GPU](./vscode/readme.md)
