@@ -68,7 +68,7 @@ You will typically follow these steps if this is your first time.
     ```
     - *Note*: This command must be running the entire time that you wish to access VS Code, if you see a connection error message in your browser, check the status of the port-forward command
     - *Note*: VS Code will continue running regardless of running port-forward, meaning that if you disconnect, then you can reconnect at a later time (assuming the job has not been stopped nor reached its maximum runtime)
-1. Open your web browser and navigate to [http://127.0.0.1:8080/?folder=/data](http://127.0.0.1:8080/?folder=/data)
+1. Open your web browser and navigate to [http://127.0.0.1:8080/?folder=/home/jovyan](http://127.0.0.1:8080/?folder=/home/jovyan)
 1. Start using VS Code in the browser
     - *Note*: Assuming that you modified the job to attach your home directory, then any VS Code extensions you install should persist between sessions and when rescheduling a VS Code job
 
