@@ -1,24 +1,26 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: vscode-gpu
+  name: vscode-gpu-
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: vscode-gpu
+      app: vscode-gpu-
   template:
     metadata:
       labels:
-        app: vscode-gpu
+        app: vscode-gpu-
     spec:
       affinity:
         nodeAffinity:
           requiredDuringSchedulingIgnoredDuringExecution:
             nodeSelectorTerms:
             - matchExpressions:
-              - key: nautilus.io/csu-tide
-                operator: Exists
+              - key: nvidia.com/gpu.product
+                operator: In
+                values:
+                - NVIDIA-L4
       tolerations:
       - key: nautilus.io/csu-tide
         operator: Exists
@@ -43,14 +45,14 @@ spec:
         resources:
           requests:
             cpu: 4
-            memory: 16Gi
+            memory: 64Gi
             ephemeral-storage: 10Gi
-            nvidia.com/gpu: 2
+            nvidia.com/gpu: 8
           limits:
             cpu: 4
-            memory: 16Gi
+            memory: 64Gi
             ephemeral-storage: 10Gi
-            nvidia.com/gpu: 2
+            nvidia.com/gpu: 8
         volumeMounts:
         - name: shared
           mountPath: /data
